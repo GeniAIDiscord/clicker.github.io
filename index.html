@@ -156,13 +156,13 @@
         <div id="upgrade-info" class="hidden"></div>
         <div id="upgrades">
             <!-- Upgrades -->
-            <div class="upgrade" data-cost="10" data-points="1" data-description="Increases your click power by 1.">Upgrade 1: +1 Click Power (Cost: 10 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="50" data-points="5" data-description="Increases your click power by 5.">Upgrade 2: +5 Click Power (Cost: 50 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="100" data-points="10" data-description="Increases your click power by 10.">Upgrade 3: +10 Click Power (Cost: 100 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="200" data-points="20" data-description="Increases your click power by 20.">Upgrade 4: +20 Click Power (Cost: 200 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="300" data-points="50" data-description="Increases your click power by 50.">Upgrade 5: +50 Click Power (Cost: 300 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="500" data-points="100" data-description="Increases your click power by 100.">Upgrade 6: +100 Click Power (Cost: 500 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="1000" data-points="200" data-description="Increases your click power by 200.">Upgrade 7: +200 Click Power (Cost: 1000 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="10" data-points="1" data-description="Increases your click power by 1.">Upgrade 1: +1 Click Power (Cost: <span class="upgrade-cost">10</span> pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="50" data-points="5" data-description="Increases your click power by 5.">Upgrade 2: +5 Click Power (Cost: <span class="upgrade-cost">50</span> pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="100" data-points="10" data-description="Increases your click power by 10.">Upgrade 3: +10 Click Power (Cost: <span class="upgrade-cost">100</span> pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="200" data-points="20" data-description="Increases your click power by 20.">Upgrade 4: +20 Click Power (Cost: <span class="upgrade-cost">200</span> pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="300" data-points="50" data-description="Increases your click power by 50.">Upgrade 5: +50 Click Power (Cost: <span class="upgrade-cost">300</span> pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="500" data-points="100" data-description="Increases your click power by 100.">Upgrade 6: +100 Click Power (Cost: <span class="upgrade-cost">500</span> pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="1000" data-points="200" data-description="Increases your click power by 200.">Upgrade 7: +200 Click Power (Cost: <span class="upgrade-cost">1000</span> pts) <span class="upgrade-count"> (0)</span></div>
         </div>
     </div>
 
@@ -219,7 +219,8 @@
 
         upgrades.forEach(upgrade => {
             upgrade.addEventListener('click', (e) => {
-                const cost = parseInt(upgrade.dataset.cost);
+                const costElement = upgrade.querySelector('.upgrade-cost');
+                const cost = parseInt(costElement.textContent);
                 const points = parseInt(upgrade.dataset.points);
 
                 if (score >= cost) {
@@ -231,6 +232,10 @@
                     const currentCount = parseInt(upgradeCountElement.textContent.replace(/[()]/g, '')) || 0;
                     upgradeCountElement.textContent = ` (${currentCount + 1})`;
                     upgradeCountElement.classList.add('purchased'); // Add purchased animation class
+
+                    // Update cost and UI for the upgrade
+                    const newCost = Math.floor(cost * 1.5); // Increase cost by 50%
+                    costElement.textContent = newCost;
 
                     setTimeout(() => {
                         upgradeCountElement.classList.remove('purchased'); // Remove after animation
