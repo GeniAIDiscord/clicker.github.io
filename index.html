@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kylers clicker game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #161616;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            color: white;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        #score {
+            font-size: 64px;
+            margin: 20px 0;
+            color: #e1bee7;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        #click-button {
+            padding: 20px;
+            font-size: 24px;
+            border: none;
+            border-radius: 10px;
+            background-color: #9c27b0;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.3s ease;
+            filter: blur(0);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #click-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        #click-button:active {
+            filter: blur(1px);
+            transform: scale(0.95);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        #upgrades {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .upgrade {
+            margin: 0 10px;
+            padding: 10px;
+            border: 2px solid #9c27b0;
+            border-radius: 10px;
+            background-color: #222;
+            color: #967bb6;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .upgrade:hover {
+            background-color: #9c27b0;
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #upgrade-info {
+            margin-top: 10px;
+            color: #d1c4e9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Clicker Game</h1>
+        <div id="score">0</div>
+        <button id="click-button">Click Me!</button>
+        <div id="upgrade-info" class="hidden"></div>
+        <div id="upgrades">
+            <div class="upgrade" data-cost="10" data-points="1">Upgrade 1 (10 pts)</div>
+            <div class="upgrade" data-cost="50" data-points="5">Upgrade 2 (50 pts)</div>
+            <div class="upgrade" data-cost="100" data-points="10">Upgrade 3 (100 pts)</div>
+        </div>
+    </div>
+
+    <script>
+        let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+        let clickPower = localStorage.getItem('clickPower') ? parseInt(localStorage.getItem('clickPower')) : 1;
+
+        const scoreDisplay = document.getElementById('score');
+        const clickButton = document.getElementById('click-button');
+        const upgrades = document.querySelectorAll('.upgrade');
+        const upgradeInfo = document.getElementById('upgrade-info');
+
+        function updateScoreDisplay() {
+            scoreDisplay.textContent = score;
+            localStorage.setItem('score', score);
+            localStorage.setItem('clickPower', clickPower);
+        }
+
+        clickButton.addEventListener('click', (e) => {
+            score += clickPower;
+            updateScoreDisplay();
+            createRipple(e.clientX, e.clientY);
+        });
+
+        function createRipple(x, y) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            ripple.style.left = `${x - clickButton.getBoundingClientRect().left}px`;
+            ripple.style.top = `${y - clickButton.getBoundingClientRect().top}px`;
+            clickButton.appendChild(ripple);
+
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        upgrades.forEach(upgrade => {
+            upgrade.addEventListener('click', (e) => {
+                const cost = parseInt(upgrade.dataset.cost);
+                const points = parseInt(upgrade.dataset.points);
+
+                if (score >= cost) {
+                    score -= cost;
+                    clickPower += points;
+                    updateScoreDisplay();
+                    upgradeInfo.textContent = `Purchased Upgrade! Click Power: ${clickPower}`;
+                    upgrade.classList.add('hidden');
+                } else {
+                    upgradeInfo.textContent = `Not enough points for ${upgrade.textContent}`;
+                }
+            });
+        });
+
+        updateScoreDisplay(); // Initialize display
+    </script>
+</body>
+</html>
