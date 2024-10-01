@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kylers clicker game</title>
+    <title>Satisfying Clicker Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -30,7 +30,8 @@
             font-size: 64px;
             margin: 20px 0;
             color: #e1bee7;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6);
+            transition: transform 0.2s ease, color 0.5s ease;
         }
 
         #click-button {
@@ -43,9 +44,6 @@
             cursor: pointer;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.3s ease;
-            filter: blur(0);
-            position: relative;
-            overflow: hidden;
         }
 
         #click-button:hover {
@@ -54,7 +52,6 @@
         }
 
         #click-button:active {
-            filter: blur(1px);
             transform: scale(0.95);
         }
 
@@ -76,23 +73,27 @@
         #upgrades {
             margin-top: 40px;
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
         }
 
         .upgrade {
-            margin: 0 10px;
-            padding: 10px;
+            margin: 12px;
+            padding: 10px 20px;
             border: 2px solid #9c27b0;
             border-radius: 10px;
             background-color: #222;
             color: #967bb6;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .upgrade:hover {
             background-color: #9c27b0;
             transform: scale(1.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
         .hidden {
@@ -103,6 +104,29 @@
             margin-top: 10px;
             color: #d1c4e9;
         }
+
+        .score-animation {
+            position: absolute;
+            font-size: 36px;
+            color: #e1bee7;
+            animation: scoreIncrease 1s ease forwards;
+        }
+
+        @keyframes scoreIncrease {
+            0% {
+                transform: translateY(-20px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+        }
+
+        .upgrade-count {
+            font-weight: bold;
+            color: #9c27b0;
+        }
     </style>
 </head>
 <body>
@@ -112,9 +136,14 @@
         <button id="click-button">Click Me!</button>
         <div id="upgrade-info" class="hidden"></div>
         <div id="upgrades">
-            <div class="upgrade" data-cost="10" data-points="1">Upgrade 1 (10 pts)</div>
-            <div class="upgrade" data-cost="50" data-points="5">Upgrade 2 (50 pts)</div>
-            <div class="upgrade" data-cost="100" data-points="10">Upgrade 3 (100 pts)</div>
+            <!-- Upgrades -->
+            <div class="upgrade" data-cost="10" data-points="1">Upgrade 1: +1 Click Power (Cost: 10 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="50" data-points="5">Upgrade 2: +5 Click Power (Cost: 50 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="100" data-points="10">Upgrade 3: +10 Click Power (Cost: 100 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="200" data-points="20">Upgrade 4: +20 Click Power (Cost: 200 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="300" data-points="50">Upgrade 5: +50 Click Power (Cost: 300 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="500" data-points="100">Upgrade 6: +100 Click Power (Cost: 500 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="1000" data-points="200">Upgrade 7: +200 Click Power (Cost: 1000 pts) <span class="upgrade-count"> (0)</span></div>
         </div>
     </div>
 
@@ -129,6 +158,10 @@
 
         function updateScoreDisplay() {
             scoreDisplay.textContent = score;
+            scoreDisplay.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                scoreDisplay.style.transform = 'scale(1)';
+            }, 200);
             localStorage.setItem('score', score);
             localStorage.setItem('clickPower', clickPower);
         }
@@ -137,6 +170,7 @@
             score += clickPower;
             updateScoreDisplay();
             createRipple(e.clientX, e.clientY);
+            createScoreAnimation(e.clientX, e.clientY, clickPower);
         });
 
         function createRipple(x, y) {
@@ -151,6 +185,19 @@
             }, 600);
         }
 
+        function createScoreAnimation(x, y, scoreIncrement) {
+            const scoreAnimation = document.createElement('div');
+            scoreAnimation.classList.add('score-animation');
+            scoreAnimation.textContent = `+${scoreIncrement}`;
+            scoreAnimation.style.left = `${x}px`;
+            scoreAnimation.style.top = `${y}px`;
+            document.body.appendChild(scoreAnimation);
+
+            setTimeout(() => {
+                scoreAnimation.remove();
+            }, 1000);
+        }
+
         upgrades.forEach(upgrade => {
             upgrade.addEventListener('click', (e) => {
                 const cost = parseInt(upgrade.dataset.cost);
@@ -159,9 +206,11 @@
                 if (score >= cost) {
                     score -= cost;
                     clickPower += points;
+                    const upgradeCountElement = upgrade.querySelector('.upgrade-count');
+                    const currentCount = parseInt(upgradeCountElement.textContent.slice(1, -1)) + 1;
+                    upgradeCountElement.textContent = ` (${currentCount})`;
                     updateScoreDisplay();
                     upgradeInfo.textContent = `Purchased Upgrade! Click Power: ${clickPower}`;
-                    upgrade.classList.add('hidden');
                 } else {
                     upgradeInfo.textContent = `Not enough points for ${upgrade.textContent}`;
                 }
