@@ -12,7 +12,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #161616;
+            background: linear-gradient(135deg, #161616, #3e1f47);
             font-family: 'Roboto', sans-serif;
         }
 
@@ -39,7 +39,7 @@
             font-size: 24px;
             border: none;
             border-radius: 10px;
-            background-color: #9c27b0;
+            background: linear-gradient(145deg, #9c27b0, #7b1fa2);
             color: white;
             cursor: pointer;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -82,7 +82,7 @@
             padding: 10px 20px;
             border: 2px solid #9c27b0;
             border-radius: 10px;
-            background-color: #222;
+            background: linear-gradient(180deg, #2b2b2b, #3e1f47);
             color: #967bb6;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.2s ease;
@@ -91,7 +91,7 @@
         }
 
         .upgrade:hover {
-            background-color: #9c27b0;
+            background: linear-gradient(145deg, #7b1fa2, #9c27b0);
             transform: scale(1.05);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
@@ -110,6 +110,7 @@
             font-size: 36px;
             color: #e1bee7;
             animation: scoreIncrease 1s ease forwards;
+            pointer-events: none; /* Prevent blocking interactions */
         }
 
         @keyframes scoreIncrease {
@@ -137,13 +138,13 @@
         <div id="upgrade-info" class="hidden"></div>
         <div id="upgrades">
             <!-- Upgrades -->
-            <div class="upgrade" data-cost="10" data-points="1">Upgrade 1: +1 Click Power (Cost: 10 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="50" data-points="5">Upgrade 2: +5 Click Power (Cost: 50 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="100" data-points="10">Upgrade 3: +10 Click Power (Cost: 100 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="200" data-points="20">Upgrade 4: +20 Click Power (Cost: 200 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="300" data-points="50">Upgrade 5: +50 Click Power (Cost: 300 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="500" data-points="100">Upgrade 6: +100 Click Power (Cost: 500 pts) <span class="upgrade-count"> (0)</span></div>
-            <div class="upgrade" data-cost="1000" data-points="200">Upgrade 7: +200 Click Power (Cost: 1000 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="10" data-points="1" data-description="Increases your click power by 1.">Upgrade 1: +1 Click Power (Cost: 10 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="50" data-points="5" data-description="Increases your click power by 5.">Upgrade 2: +5 Click Power (Cost: 50 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="100" data-points="10" data-description="Increases your click power by 10.">Upgrade 3: +10 Click Power (Cost: 100 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="200" data-points="20" data-description="Increases your click power by 20.">Upgrade 4: +20 Click Power (Cost: 200 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="300" data-points="50" data-description="Increases your click power by 50.">Upgrade 5: +50 Click Power (Cost: 300 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="500" data-points="100" data-description="Increases your click power by 100.">Upgrade 6: +100 Click Power (Cost: 500 pts) <span class="upgrade-count"> (0)</span></div>
+            <div class="upgrade" data-cost="1000" data-points="200" data-description="Increases your click power by 200.">Upgrade 7: +200 Click Power (Cost: 1000 pts) <span class="upgrade-count"> (0)</span></div>
         </div>
     </div>
 
@@ -190,7 +191,7 @@
             scoreAnimation.classList.add('score-animation');
             scoreAnimation.textContent = `+${scoreIncrement}`;
             scoreAnimation.style.left = `${x}px`;
-            scoreAnimation.style.top = `${y}px`;
+            scoreAnimation.style.top = `${y - 30}px`; // Offset by 30px upwards
             document.body.appendChild(scoreAnimation);
 
             setTimeout(() => {
