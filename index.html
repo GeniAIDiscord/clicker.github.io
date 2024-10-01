@@ -127,6 +127,24 @@
         .upgrade-count {
             font-weight: bold;
             color: #9c27b0;
+            transition: color 0.2s ease;
+        }
+
+        .upgrade-count.purchased {
+            color: #ffcc00; /* Change color when an upgrade is purchased */
+            animation: purchasedAnimation 0.5s ease forwards;
+        }
+
+        @keyframes purchasedAnimation {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
     </style>
 </head>
@@ -208,8 +226,16 @@
                     score -= cost;
                     clickPower += points;
                     const upgradeCountElement = upgrade.querySelector('.upgrade-count');
-                    const currentCount = parseInt(upgradeCountElement.textContent.slice(1, -1)) + 1;
-                    upgradeCountElement.textContent = ` (${currentCount})`;
+
+                    // Fix NaN issue here
+                    const currentCount = parseInt(upgradeCountElement.textContent.replace(/[()]/g, '')) || 0;
+                    upgradeCountElement.textContent = ` (${currentCount + 1})`;
+                    upgradeCountElement.classList.add('purchased'); // Add purchased animation class
+
+                    setTimeout(() => {
+                        upgradeCountElement.classList.remove('purchased'); // Remove after animation
+                    }, 500);
+
                     updateScoreDisplay();
                     upgradeInfo.textContent = `Purchased Upgrade! Click Power: ${clickPower}`;
                 } else {
